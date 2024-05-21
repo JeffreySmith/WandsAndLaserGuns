@@ -27,6 +27,7 @@ func TestPlayerWandRoll(t *testing.T) {
 	outcome := p.Roll()
 
 	if want != outcome {
+		t.Log("This test fails sometimes")
 		t.Errorf("Want %d, got %d",want,outcome)
 	}
 }
@@ -41,6 +42,7 @@ func TestPlayerLaserRoll(t *testing.T) {
 	outcome := p.Roll()
 
 	if want != outcome {
+		t.Log("This test fails *sometimes*")
 		t.Errorf("Want %d, got %d",want,outcome)
 	}
 }
@@ -55,6 +57,7 @@ func TestLasersAndWandsDisabled(t *testing.T) {
 	want := 6
 	got := p.Roll()
 	if got != want {
+		t.Log("This test might fail if something is up with the rand seed")
 		t.Errorf("Want %d, got %d",want,got)
 	}
 }
