@@ -49,6 +49,8 @@ type Deck struct {
 	Cards []Card
 }
 
+
+
 func (e Effects) String() string {
 	switch e {
 	case BlockWands:
@@ -73,6 +75,8 @@ func (e Effects) String() string {
 		return "Add to Spade Tally"
 	case PlusTwoOrRegain:
 		return "Plus 2 or Regain"
+	case AddHealth:
+		return "Add Health"
 	case Subtract2orHealth:
 		return "Subtract 2 or Health"
 	case SubtractHealth:
@@ -123,7 +127,7 @@ func initFaceCard(card int, suit Suits) Card {
 	var onFailure Effects
 	duration := Sticky
 	new_card := Card{Value: CardValue(card), Suit: suit}
-	new_card.Effect = make(map[string]Effects, 3)
+	new_card.Effect = make(map[string]Effects,2)
 	switch suit {
 	case Hearts:
 		switch card {
@@ -205,9 +209,42 @@ func NewNumberDeck() *Deck {
 	}
 	return &deck
 }
+//Bool here returns false on an empty deck
+//This is the win condition
+func (d *Deck) Draw() (Card, bool) {
+	if len(d.Cards) == 0{
+		return Card{},false
+	}
+	c := d.Cards[0]
+	d.Cards = d.Cards[1:]
+	return c,true
+}
+//This only occurs with "boss" cards
+func (d *Deck) InsertCard(c Card) {
+	d.Cards = append(d.Cards,c)
+	d.Shuffle()
+}
 
 func (d *Deck) Shuffle() {
 	rand.Shuffle(len(d.Cards), func(i, j int) {
 		d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i]
 	})
+}
+//Several rules in the game depend on this
+func NumSuits(cards []Card, suit Suits) int {
+	var total int
+	for _, c := range cards {
+		if c.Suit == suit {
+			total += 1
+		}
+	}
+	return total
+}
+func (d *Deck) RemoveCards(suit Suits){
+	for i, c := range d.Cards {
+		if c.Suit == suit {
+			d.Cards[i] = d.Cards[len(d.Cards)-1]
+			d.Cards = d.Cards[:len(d.Cards)-1]
+		}
+	}
 }
