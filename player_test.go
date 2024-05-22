@@ -15,9 +15,9 @@ func TestDieRoll(t *testing.T) {
 		t.Errorf("Expected die roll to be 1d10, got %d",n)
 	}
 }
-//FIXME:This test fails *sometimes*
+
 func TestPlayerWandRoll(t *testing.T) {
-	t.Parallel()
+
 	p := wl.Player{}
 	p.Wands = 3
 	want := 9
@@ -27,12 +27,11 @@ func TestPlayerWandRoll(t *testing.T) {
 	outcome := p.Roll()
 
 	if want != outcome {
-		t.Log("This test fails sometimes")
 		t.Errorf("Want %d, got %d",want,outcome)
 	}
 }
 func TestPlayerLaserRoll(t *testing.T) {
-	t.Parallel()
+	
 	p := wl.Player{}
 	p.Laserguns = 3
 	want := 9
@@ -47,7 +46,6 @@ func TestPlayerLaserRoll(t *testing.T) {
 	}
 }
 func TestLasersAndWandsDisabled(t *testing.T) {
-	t.Parallel()
 
 	rand.Seed(1)
 	p := wl.Player{}
