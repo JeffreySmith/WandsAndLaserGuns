@@ -39,6 +39,7 @@ import (
 
 type Player struct {
 	Health int
+	MaxHealth int
 	Wands int
 	Laserguns int
 	TurnNumber int
@@ -49,10 +50,12 @@ type Player struct {
 }
 func NewPlayer() Player{
 	p := Player{}
-	p.Health = RollDie()
+	p.MaxHealth = RollDie()
+	p.Health = p.MaxHealth
 	p.BlockOnSuit = make(map[Suits] []Effects,4)
 	return p
 }
+
 //Get a slice of effects that are active for that suit.
 func (p Player) SuitBlockStatus(suit Suits) []Effects {
 	effects, ok := p.BlockOnSuit[suit]
@@ -115,11 +118,13 @@ func (p *Player) DiscardStatus()  {
 	if spades >= 5 {
 		if !slices.Contains(p.ActiveEffects, BlockLasers){
 			p.ActiveEffects = append(p.ActiveEffects,BlockLasers)
+			p.DiscardPile = RemoveCards(p.DiscardPile,Spades)
 		}
 	}
 	if clubs >= 5 {
 		if !slices.Contains(p.ActiveEffects, BlockWands){
 			p.ActiveEffects = append(p.ActiveEffects,BlockWands)
+			p.DiscardPile = RemoveCards(p.DiscardPile,Clubs)
 		}
 	}
 }

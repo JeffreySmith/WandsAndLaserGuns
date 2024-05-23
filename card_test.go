@@ -100,8 +100,20 @@ func TestPlayerDiscardPileSetsEffects(t *testing.T) {
 	if !cmp.Equal(want,got) {
 		t.Error(cmp.Diff(want,got))
 	}
-	
+}
 
+func TestRemoveCardsFromSlice(t *testing.T) {
+	t.Parallel()
+	d := wl.NewFaceDeck()
+
+	want := 8
+	d.Cards = wl.RemoveCards(d.Cards,wl.Spades)
+	d.Cards = wl.RemoveCards(d.Cards, wl.Clubs)
+	got := len(d.Cards)
+
+	if want != got {
+		t.Errorf("Want %v, got %v",want, got)
+	}
 }
 
 func Benchmark_CreateFaceDeck(b *testing.B) {

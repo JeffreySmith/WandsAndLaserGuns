@@ -289,3 +289,19 @@ func (d *Deck) RemoveCards(suit Suits){
 		}
 	}
 }
+//Remove Cards from a card array.
+//Primarily used on the Player's discard pile.
+func RemoveCards(cards []Card, suit Suits) []Card{
+	for i:= len(cards)-1; i>= 0; i-- {
+		c := cards[i]
+		if c.Suit == suit {
+			if i < len(cards){
+				cards = append(cards[:i],cards[i+1:]...)
+
+			} else if i == len(cards) -1 {
+				cards = cards[:len(cards)-1]
+			}
+		}
+	}
+	return cards
+}
