@@ -10,9 +10,9 @@ import (
 
 func TestDieRoll(t *testing.T) {
 	t.Parallel()
-	n:= wl.RollDie()
+	n := wl.RollDie()
 	if n < 0 || n > 10 {
-		t.Errorf("Expected die roll to be 1d10, got %d",n)
+		t.Errorf("Expected die roll to be 1d10, got %d", n)
 	}
 }
 func TestCreateNewPlayer(t *testing.T) {
@@ -33,7 +33,7 @@ func TestWandsBlockedOnDiamonds(t *testing.T) {
 	got := p.SuitBlockStatus(wl.Diamonds)
 
 	if !cmp.Equal(want, got) {
-		t.Error(cmp.Diff(want,got))
+		t.Error(cmp.Diff(want, got))
 	}
 
 }
@@ -47,7 +47,7 @@ func TestWandsUnBlockedOnDiamonds(t *testing.T) {
 	got := p.SuitBlockStatus(wl.Diamonds)
 
 	if !cmp.Equal(want, got) {
-		t.Error(cmp.Diff(want,got))
+		t.Error(cmp.Diff(want, got))
 	}
 
 }
@@ -63,22 +63,21 @@ func TestPlayerWandRoll(t *testing.T) {
 	outcome := p.Roll(wl.Diamonds)
 
 	if want != outcome {
-		t.Errorf("Want %d, got %d",want,outcome)
+		t.Errorf("Want %d, got %d", want, outcome)
 	}
 }
 func TestPlayerLaserRoll(t *testing.T) {
-	
+
 	p := wl.Player{}
 	p.Laserguns = 3
 	want := 9
 	rand.Seed(1)
 
-
 	outcome := p.Roll(wl.Diamonds)
 
 	if want != outcome {
 		t.Log("This test fails *sometimes*")
-		t.Errorf("Want %d, got %d",want,outcome)
+		t.Errorf("Want %d, got %d", want, outcome)
 	}
 }
 func TestLasersAndWandsDisabled(t *testing.T) {
@@ -91,8 +90,8 @@ func TestLasersAndWandsDisabled(t *testing.T) {
 	want := 6
 	got := p.Roll(wl.Diamonds)
 	if got != want {
-		
-		t.Errorf("Want %d, got %d",want,got)
+
+		t.Errorf("Want %d, got %d", want, got)
 	}
 }
 func TestPlayerBlockedOnSuit(t *testing.T) {
@@ -106,6 +105,83 @@ func TestPlayerBlockedOnSuit(t *testing.T) {
 
 	if want != got {
 		t.Log(got)
+		t.Errorf("Want %v, got %v", want, got)
+	}
+}
+func TestLaserStatLoss(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	p.Health = 5
+	p.Laserguns = 3
+	p.AceLoss(wl.Laser)
+
+	want := 1
+	got := p.Laserguns
+	if p.Health != 5 {
+		t.Errorf("Expected health to be 5, got %v", p.Health)
+	}
+	if want != got {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+	
+}
+func TestRemove2HealthOnLossToAce(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	p.Health = 8
+	want := 6
+	p.AceLoss(wl.Ignore)
+	got := p.Health
+
+	if want != got {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+}
+func TestWandStatOnLossToAce(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	p.Health = 4
+	p.Wands = 5
+	want := 3
+	p.AceLoss(wl.Wand)
+	got := p.Wands
+
+	if p.Health != 4 {
+		t.Errorf("Expected health to be 4, got %v", p.Health)
+	}
+	if want != got {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+}
+func TestOnAceLossWithLowStatsWands(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	p.Health = 4
+	p.Wands = 1
+	want := 2
+	p.AceLoss(wl.Wand)
+	got := p.Health
+
+	if p.Wands != 1 {
+		t.Errorf("Expected wand to be 1, got %v", p.Wands)
+	}
+	if want != got {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+}
+func TestOnAceLossWithLowStatsLasers(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	p.Health = 4
+	p.Laserguns = 1
+	want := 2
+	p.AceLoss(wl.Laser)
+	got := p.Health
+
+	if p.Laserguns != 1 {
+		t.Errorf("Expected Laserguns to be 1, got %v", p.Laserguns)
+	}
+	if want != got {
 		t.Errorf("Want %v, got %v", want, got)
 	}
 }

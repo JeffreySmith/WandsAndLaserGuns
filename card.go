@@ -80,8 +80,6 @@ type Deck struct {
 	Cards []Card
 }
 
-
-
 func (e Effects) String() string {
 	switch e {
 	case BlockWands:
@@ -152,14 +150,15 @@ func (s Suits) String() string {
 		return "Spades"
 	}
 }
-//Creates a face card and initialises all of their effects.
+
+// Creates a face card and initialises all of their effects.
 func initFaceCard(card int, suit Suits) Card {
 	var onSuccess Effects
 	var onFailure Effects
 	duration := Sticky
 	new_card := Card{Value: CardValue(card), Suit: suit}
 	//Strangely, setting it to make(...,2) seems to be consistently fastest
-	new_card.Effect = make(map[string]Effects,2)
+	new_card.Effect = make(map[string]Effects, 2)
 	switch suit {
 	case Hearts:
 		switch card {
@@ -220,7 +219,8 @@ func initFaceCard(card int, suit Suits) Card {
 	new_card.Effect["duration"] = duration
 	return new_card
 }
-//Create a new face card only deck
+
+// Create a new face card only deck
 func NewFaceDeck() *Deck {
 	deck := Deck{}
 	for i := 0; i < 4; i++ {
@@ -230,7 +230,8 @@ func NewFaceDeck() *Deck {
 	}
 	return &deck
 }
-//Create a new numbers-only deck.
+
+// Create a new numbers-only deck.
 func NewNumberDeck() *Deck {
 	deck := Deck{}
 	for i := 0; i < 4; i++ {
@@ -243,21 +244,23 @@ func NewNumberDeck() *Deck {
 	}
 	return &deck
 }
-//Bool here returns false on an empty deck.
-//This is the win condition.
+
+// Bool here returns false on an empty deck.
+// This is the win condition.
 func (d *Deck) Draw() (Card, bool) {
-	if len(d.Cards) == 0{
-		return Card{},false
+	if len(d.Cards) == 0 {
+		return Card{}, false
 	}
 	c := d.Cards[0]
 	d.Cards = d.Cards[1:]
 
-	return c,true
+	return c, true
 }
-//Insert a single card into a deck.
-//This only occurs with "boss" cards.
+
+// Insert a single card into a deck.
+// This only occurs with "boss" cards.
 func (d *Deck) InsertCard(c Card) {
-	d.Cards = append(d.Cards,c)
+	d.Cards = append(d.Cards, c)
 	d.Shuffle()
 
 }
@@ -267,8 +270,9 @@ func (d *Deck) Shuffle() {
 		d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i]
 	})
 }
-//Count the number of Cards of a suit in a particular card array
-//Several rules in the game depend on this
+
+// Count the number of Cards of a suit in a particular card array
+// Several rules in the game depend on this
 func NumSuits(cards []Card, suit Suits) int {
 	var total int
 	for _, c := range cards {
@@ -279,9 +283,10 @@ func NumSuits(cards []Card, suit Suits) int {
 
 	return total
 }
-//Delete all cards of a particular suit.
-//Used after disabling wands/lasers because of the discard pile.
-func (d *Deck) RemoveCards(suit Suits){
+
+// Delete all cards of a particular suit.
+// Used after disabling wands/lasers because of the discard pile.
+func (d *Deck) RemoveCards(suit Suits) {
 	for i, c := range d.Cards {
 		if c.Suit == suit {
 			d.Cards[i] = d.Cards[len(d.Cards)-1]
@@ -289,16 +294,17 @@ func (d *Deck) RemoveCards(suit Suits){
 		}
 	}
 }
-//Remove Cards from a card array.
-//Primarily used on the Player's discard pile.
-func RemoveCards(cards []Card, suit Suits) []Card{
-	for i:= len(cards)-1; i>= 0; i-- {
+
+// Remove Cards from a card array.
+// Primarily used on the Player's discard pile.
+func RemoveCards(cards []Card, suit Suits) []Card {
+	for i := len(cards) - 1; i >= 0; i-- {
 		c := cards[i]
 		if c.Suit == suit {
-			if i < len(cards){
-				cards = append(cards[:i],cards[i+1:]...)
+			if i < len(cards) {
+				cards = append(cards[:i], cards[i+1:]...)
 
-			} else if i == len(cards) -1 {
+			} else if i == len(cards)-1 {
 				cards = cards[:len(cards)-1]
 			}
 		}

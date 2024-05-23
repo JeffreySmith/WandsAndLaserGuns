@@ -36,27 +36,48 @@ import (
 	"slices"
 )
 
+type Stat int
+
+const (
+	Wand Stat = iota
+	Laser
+	Ignore
+)
 
 type Player struct {
-	Health int
-	MaxHealth int
-	Wands int
-	Laserguns int
-	TurnNumber int
-	DiscardPile []Card
-	DefeatedPile []Card
+	Health        int
+	MaxHealth     int
+	Wands         int
+	Laserguns     int
+	TurnNumber    int
+	ActiveStat    Stat
+	DiscardPile   []Card
+	DefeatedPile  []Card
 	ActiveEffects []Effects
-	BlockOnSuit map[Suits] []Effects
+	BlockOnSuit   map[Suits][]Effects
 }
-func NewPlayer() Player{
+
+func (s Stat) String() string {
+	switch s {
+	case Wand:
+		return "Wand"
+	case Laser:
+		return "Laser"
+	case Ignore:
+		return "No stat"
+	default:
+		return "Shouldn't happen"
+	}
+}
+func NewPlayer() Player {
 	p := Player{}
 	p.MaxHealth = RollDie()
 	p.Health = p.MaxHealth
-	p.BlockOnSuit = make(map[Suits] []Effects,4)
+	p.BlockOnSuit = make(map[Suits][]Effects, 4)
 	return p
 }
 
-//Get a slice of effects that are active for that suit.
+// Get a slice of effects that are active for that suit.
 func (p Player) SuitBlockStatus(suit Suits) []Effects {
 	effects, ok := p.BlockOnSuit[suit]
 	if !ok {
@@ -64,14 +85,15 @@ func (p Player) SuitBlockStatus(suit Suits) []Effects {
 	}
 	return effects
 }
-//Remove an active effect that only affects one suit.
+
+// Remove an active effect that only affects one suit.
 func (p Player) RemoveSuitEffect(suit Suits, effect Effects) {
 	effect_slice, ok := p.BlockOnSuit[suit]
 	if !ok {
 		return
 	}
 	for i, e := range effect_slice {
- 		if e ==  effect {
+		if e == effect {
 			if len(effect_slice) == 1 {
 				effect_slice = []Effects{}
 			} else if i == 0 {
@@ -79,17 +101,20 @@ func (p Player) RemoveSuitEffect(suit Suits, effect Effects) {
 			} else if i == 1 {
 				effect_slice = []Effects{effect_slice[0]}
 			}
-			
+
 		}
 	}
 	p.BlockOnSuit[suit] = effect_slice
 }
-//Returns a random number between 1-10
+
+// Returns a random number between 1-10
 func RollDie() int {
-	return rand.Intn(9)+1
+	return rand.Intn(9) + 1
 }
-//Returns a random number, factoring in stat levels and blocked stats
+
+// Returns a random number, factoring in stat levels and blocked stats
 func (p *Player) Roll(suit Suits) int {
+	p.ActiveStat = Ignore
 	var stat int
 	var wand, laser int
 	effects := p.SuitBlockStatus(suit)
@@ -105,26 +130,50 @@ func (p *Player) Roll(suit Suits) int {
 
 	if wand >= laser {
 		stat = wand
+		p.ActiveStat = Wand
 	} else {
 		stat = laser
+		p.ActiveStat = Laser
+	}
+	if stat == 0 {
+		p.ActiveStat = Ignore
 	}
 	return (RollDie() + stat)
 }
 
-func (p *Player) DiscardStatus()  {
-	spades := NumSuits(p.DiscardPile,Spades)
-	clubs := NumSuits(p.DiscardPile,Clubs)
+func (p *Player) DiscardStatus() {
+	spades := NumSuits(p.DiscardPile, Spades)
+	clubs := NumSuits(p.DiscardPile, Clubs)
 
 	if spades >= 5 {
-		if !slices.Contains(p.ActiveEffects, BlockLasers){
-			p.ActiveEffects = append(p.ActiveEffects,BlockLasers)
-			p.DiscardPile = RemoveCards(p.DiscardPile,Spades)
+		if !slices.Contains(p.ActiveEffects, BlockLasers) {
+			p.ActiveEffects = append(p.ActiveEffects, BlockLasers)
+			p.DiscardPile = RemoveCards(p.DiscardPile, Spades)
 		}
 	}
 	if clubs >= 5 {
-		if !slices.Contains(p.ActiveEffects, BlockWands){
-			p.ActiveEffects = append(p.ActiveEffects,BlockWands)
-			p.DiscardPile = RemoveCards(p.DiscardPile,Clubs)
+		if !slices.Contains(p.ActiveEffects, BlockWands) {
+			p.ActiveEffects = append(p.ActiveEffects, BlockWands)
+			p.DiscardPile = RemoveCards(p.DiscardPile, Clubs)
 		}
 	}
+}
+
+func (p *Player) AceLoss(stat Stat) {
+	if stat == Wand {
+		if p.Wands >= 2 {
+			p.Wands -= 2
+		} else {
+			p.Health -= 2
+		}
+	} else if stat == Laser {
+		if p.Laserguns >= 2 {
+			p.Laserguns -= 2
+		} else {
+			p.Health -= 2
+		}
+	} else {
+		p.Health -= 2
+	}
+	return
 }
