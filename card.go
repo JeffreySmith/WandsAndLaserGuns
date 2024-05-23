@@ -1,3 +1,34 @@
+/*
+BSD 3-Clause License
+
+Copyright (c) 2024, Jeffrey Smith
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 package wandsandlaserguns
 
 import (
@@ -121,12 +152,13 @@ func (s Suits) String() string {
 		return "Spades"
 	}
 }
-
+//Creates a face card and initialises all of their effects.
 func initFaceCard(card int, suit Suits) Card {
 	var onSuccess Effects
 	var onFailure Effects
 	duration := Sticky
 	new_card := Card{Value: CardValue(card), Suit: suit}
+	//Strangely, setting it to make(...,2) seems to be consistently fastest
 	new_card.Effect = make(map[string]Effects,2)
 	switch suit {
 	case Hearts:
@@ -188,6 +220,7 @@ func initFaceCard(card int, suit Suits) Card {
 	new_card.Effect["duration"] = duration
 	return new_card
 }
+//Create a new face card only deck
 func NewFaceDeck() *Deck {
 	deck := Deck{}
 	for i := 0; i < 4; i++ {
@@ -197,6 +230,7 @@ func NewFaceDeck() *Deck {
 	}
 	return &deck
 }
+//Create a new numbers-only deck.
 func NewNumberDeck() *Deck {
 	deck := Deck{}
 	for i := 0; i < 4; i++ {
@@ -209,20 +243,23 @@ func NewNumberDeck() *Deck {
 	}
 	return &deck
 }
-//Bool here returns false on an empty deck
-//This is the win condition
+//Bool here returns false on an empty deck.
+//This is the win condition.
 func (d *Deck) Draw() (Card, bool) {
 	if len(d.Cards) == 0{
 		return Card{},false
 	}
 	c := d.Cards[0]
 	d.Cards = d.Cards[1:]
+
 	return c,true
 }
-//This only occurs with "boss" cards
+//Insert a single card into a deck.
+//This only occurs with "boss" cards.
 func (d *Deck) InsertCard(c Card) {
 	d.Cards = append(d.Cards,c)
 	d.Shuffle()
+
 }
 
 func (d *Deck) Shuffle() {
@@ -230,6 +267,7 @@ func (d *Deck) Shuffle() {
 		d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i]
 	})
 }
+//Count the number of Cards of a suit in a particular card array
 //Several rules in the game depend on this
 func NumSuits(cards []Card, suit Suits) int {
 	var total int
@@ -238,8 +276,11 @@ func NumSuits(cards []Card, suit Suits) int {
 			total += 1
 		}
 	}
+
 	return total
 }
+//Delete all cards of a particular suit.
+//Used after disabling wands/lasers because of the discard pile.
 func (d *Deck) RemoveCards(suit Suits){
 	for i, c := range d.Cards {
 		if c.Suit == suit {
