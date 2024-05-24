@@ -77,6 +77,21 @@ func NewPlayer() Player {
 	return p
 }
 
+func (p *Player) RemoveActiveEffect(effect Effects) {
+	for i := len(p.ActiveEffects) - 1; i >= 0; i-- {
+
+		if p.ActiveEffects[i] == effect {
+			if i < len(p.ActiveEffects) {
+				p.ActiveEffects = append(p.ActiveEffects[:i], p.ActiveEffects[i+1:]...)
+
+			} else if i == len(p.ActiveEffects)-1 {
+				p.ActiveEffects = p.ActiveEffects[:len(p.ActiveEffects)-1]
+			}
+		}
+	}
+
+}
+
 // Get a slice of effects that are active for that suit.
 func (p Player) SuitBlockStatus(suit Suits) []Effects {
 	effects, ok := p.BlockOnSuit[suit]
@@ -101,7 +116,6 @@ func (p Player) RemoveSuitEffect(suit Suits, effect Effects) {
 			} else if i == 1 {
 				effect_slice = []Effects{effect_slice[0]}
 			}
-
 		}
 	}
 	p.BlockOnSuit[suit] = effect_slice
@@ -176,4 +190,15 @@ func (p *Player) AceLoss(stat Stat) {
 		p.Health -= 2
 	}
 	return
+}
+func (p *Player) WinAgainstAce() {
+	if slices.Contains(p.ActiveEffects, BlockLasers) && p.Laserguns >= p.Wands {
+		p.RemoveActiveEffect(BlockLasers)
+		
+	} else if slices.Contains(p.ActiveEffects, BlockWands) {
+		p.RemoveActiveEffect(BlockWands)
+	} else {
+		p.Laserguns += 1
+		p.Wands += 1
+	}
 }

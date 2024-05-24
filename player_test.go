@@ -185,3 +185,36 @@ func TestOnAceLossWithLowStatsLasers(t *testing.T) {
 		t.Errorf("Want %v, got %v", want, got)
 	}
 }
+func TestSuccessfulAceEncounterStatIncrease(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	p.WinAgainstAce()
+	wands := p.Wands
+	lasers := p.Laserguns
+
+	if wands != 1 || lasers != 1 {
+		t.Errorf("Wanted lasers and wands to be 1, got %v and %v", lasers, wands)
+	}
+}
+func TestAceEncounterSuccessRestoreStats(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	p.Laserguns = 4
+	p.ActiveEffects = []wl.Effects{wl.BlockLasers}
+	p.WinAgainstAce()
+	want := []wl.Effects{}
+	got := p.ActiveEffects
+
+	if !cmp.Equal(want,got) {
+		t.Error(cmp.Diff(want, got))
+	}
+	p.ActiveEffects = []wl.Effects{wl.BlockWands}
+	p.WinAgainstAce()
+	got = p.ActiveEffects
+
+	if !cmp.Equal(want,got) {
+		t.Error(cmp.Diff(want, got))
+	}
+
+	
+}
