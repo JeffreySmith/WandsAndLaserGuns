@@ -41,6 +41,7 @@ type Stat int
 const (
 	Wand Stat = iota
 	Laser
+	Health
 	Ignore
 )
 
@@ -198,7 +199,21 @@ func (p *Player) WinAgainstAce() {
 	} else if slices.Contains(p.ActiveEffects, BlockWands) {
 		p.RemoveActiveEffect(BlockWands)
 	} else {
+		p.AddStat(Laser)
+		p.AddStat(Wand)
+	}
+}
+//Add one to the player's stat.
+func (p *Player) AddStat(stat Stat) {
+	if stat == Health {
+		if p.MaxHealth == p.Health {
+			p.MaxHealth += 1
+		} else {
+			p.Health += 1
+		}
+	} else if stat == Laser {
 		p.Laserguns += 1
+	} else if stat == Wand {
 		p.Wands += 1
 	}
 }
