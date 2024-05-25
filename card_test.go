@@ -116,6 +116,43 @@ func TestRemoveCardsFromSlice(t *testing.T) {
 	}
 }
 
+func TestCardDrawTally(t *testing.T) {
+	t.Parallel()
+	faceCard := wl.Card{Value:14, Suit: wl.Diamonds}
+	numberCard := wl.Card{Value:6, Suit: wl.Spades}
+	p := wl.NewPlayer()
+	got := wl.CalculateDrawTotal(p, faceCard, numberCard)
+	want := 10
+	if got != want {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+}
+
+func TestCardDrawTallyBoss(t *testing.T) {
+	t.Parallel()
+	faceCard := wl.Card{Value:14, Suit: wl.Diamonds}
+	numberCard := wl.Card{Value:6, Suit: wl.Diamonds}
+	p := wl.NewPlayer()
+	got := wl.CalculateDrawTotal(p, faceCard, numberCard)
+	want := 14
+	if got != want {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+}
+
+func TestDrawTallyPlusOneEffect(t *testing.T) {
+	t.Parallel()
+	faceCard := wl.Card{Value:12, Suit: wl.Diamonds}
+	numberCard := wl.Card{Value:6, Suit: wl.Hearts}
+	p := wl.NewPlayer()
+	p.ActiveEffects = []wl.Effects{wl.HeartTally}
+	got := wl.CalculateDrawTotal(p, faceCard, numberCard)
+	want := 9
+	if got != want {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+}
+
 func Benchmark_CreateFaceDeck(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

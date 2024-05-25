@@ -195,7 +195,7 @@ func (p *Player) AceLoss(stat Stat) {
 func (p *Player) WinAgainstAce() {
 	if slices.Contains(p.ActiveEffects, BlockLasers) && p.Laserguns >= p.Wands {
 		p.RemoveActiveEffect(BlockLasers)
-		
+
 	} else if slices.Contains(p.ActiveEffects, BlockWands) {
 		p.RemoveActiveEffect(BlockWands)
 	} else {
@@ -203,7 +203,8 @@ func (p *Player) WinAgainstAce() {
 		p.AddStat(Wand)
 	}
 }
-//Add one to the player's stat.
+
+// Add one to the player's stat.
 func (p *Player) AddStat(stat Stat) {
 	if stat == Health {
 		if p.MaxHealth == p.Health {
@@ -216,4 +217,29 @@ func (p *Player) AddStat(stat Stat) {
 	} else if stat == Wand {
 		p.Wands += 1
 	}
+}
+
+func (p Player) TallyEffect(suit Suits) bool {
+	var active bool
+
+	switch suit {
+	case Diamonds:
+		if slices.Contains(p.ActiveEffects, DiamondTally) {
+			active = true
+		}
+	case Clubs:
+		if slices.Contains(p.ActiveEffects, ClubTally) {
+			active = true
+		}
+	case Hearts:
+		if slices.Contains(p.ActiveEffects, HeartTally) {
+			active = true
+		}
+	case Spades:
+		if slices.Contains(p.ActiveEffects, SpadeTally) {
+			active = true
+		}
+	}
+
+	return active
 }

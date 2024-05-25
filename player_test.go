@@ -79,7 +79,6 @@ func TestPlayerLaserRoll(t *testing.T) {
 	outcome := p.Roll(wl.Diamonds)
 
 	if want != outcome {
-		t.Log("This test fails *sometimes*")
 		t.Errorf("Want %d, got %d", want, outcome)
 	}
 }
@@ -255,5 +254,27 @@ func TestAddHealth(t *testing.T) {
 	want = 5
 	if p.Health != want {
 		t.Errorf("Want health to be %v, got %v", want, p.Health)
+	}
+}
+
+func TestCardTally(t *testing.T) {
+	t.Parallel()
+
+	p := wl.NewPlayer()
+	p.ActiveEffects = []wl.Effects{
+		wl.HeartTally, wl.DiamondTally,
+		wl.SpadeTally, wl.ClubTally}
+
+	if !p.TallyEffect(wl.Hearts) {
+		t.Error("Hearts: Wanted true, got false")
+	}
+	if !p.TallyEffect(wl.Diamonds) {
+		t.Error("Diamonds: Wanted true, got false")
+	}
+	if !p.TallyEffect(wl.Spades) {
+		t.Error("Spades: Wanted true, got false")
+	}
+	if !p.TallyEffect(wl.Clubs) {
+		t.Error("Clubs: Wanted true, got false")
 	}
 }

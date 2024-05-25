@@ -311,3 +311,16 @@ func RemoveCards(cards []Card, suit Suits) []Card {
 	}
 	return cards
 }
+
+func CalculateDrawTotal(p Player, f, n Card) int {
+	var bonus int
+	face := f.Value - 10
+	number := n.Value
+	if p.TallyEffect(n.Suit) {
+		bonus += 1
+	}
+	if f.Suit == n.Suit {
+		face *= 2
+	}
+	return int(face+number) + bonus
+}
