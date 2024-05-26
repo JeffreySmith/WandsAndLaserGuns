@@ -278,3 +278,25 @@ func TestCardTally(t *testing.T) {
 		t.Error("Clubs: Wanted true, got false")
 	}
 }
+
+func Test10DiamondsOrMoreToSkipTurn(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	//Pretend this is the defeated pile
+	p.DefeatedPile = wl.NewNumberDeck().Cards
+	p.DefeatedPile = append(p.DefeatedPile,
+		wl.Card{Value:12, Suit:wl.Diamonds},
+		wl.Card{Value: 14, Suit:wl.Diamonds},
+	)
+	got := p.NumberOfDefeated(wl.Diamonds)
+	want := 11
+	if got < 11 {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+	p.CheckDiscardPileForToken()
+	want = 1
+	got = p.SkipTokens
+	if want != got {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+}

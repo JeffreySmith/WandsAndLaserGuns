@@ -56,6 +56,7 @@ type Player struct {
 	DefeatedPile  []Card
 	ActiveEffects []Effects
 	BlockOnSuit   map[Suits][]Effects
+	SkipTokens    int
 }
 
 func (s Stat) String() string {
@@ -240,6 +241,23 @@ func (p Player) TallyEffect(suit Suits) bool {
 			active = true
 		}
 	}
-
 	return active
+}
+
+func (p Player) NumberOfDefeated(suit Suits) int {
+	var count int
+	for _, c := range(p.DefeatedPile){
+		if c.Suit == suit {
+			count++
+		}
+	}
+	return count
+}
+
+func (p *Player) CheckDiscardPileForToken() {
+	count := p.NumberOfDefeated(Diamonds)
+	if count >= 10 {
+		p.DefeatedPile = RemoveCardsFinite(p.DefeatedPile, 10, Diamonds)
+		p.SkipTokens += 1
+	}
 }

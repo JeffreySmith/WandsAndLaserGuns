@@ -312,6 +312,27 @@ func RemoveCards(cards []Card, suit Suits) []Card {
 	return cards
 }
 
+func RemoveCardsFinite(cards []Card, count int, suit Suits) []Card {
+	
+	for i := len(cards) - 1; i >= 0; i-- {
+		c := cards[i]
+		if c.Suit == suit {
+			
+			if i < len(cards) {
+				cards = append(cards[:i], cards[i+1:]...)
+
+			} else if i == len(cards)-1 {
+				cards = cards[:len(cards)-1]
+			}
+			count -= 1
+
+			if count <= 0 {
+				break
+			}
+		}
+	}
+	return cards
+}
 func CalculateDrawTotal(p Player, f, n Card) int {
 	var bonus int
 	face := f.Value - 10
