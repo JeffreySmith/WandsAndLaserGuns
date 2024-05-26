@@ -15,5 +15,10 @@ macos:
 	GOOS=darwin GOARCH=arm64 go build -o wandsandlasers_macos cmd/game/main.go
 freebsd:
 	GOOS=freebsd GOARCH=amd64 go build -o wandsandlasers_freebsd cmd/game/main.go
+cover:
+	go test -coverprofile cover.out
+	go tool cover -html cover.out -o cover.html
+	rm -f cover.out
 clean:
-	rm wandsandlasers*
+	rm -f wandsandlasers*
+	rm -f cover.html
