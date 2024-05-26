@@ -1,11 +1,11 @@
 package wandsandlaserguns
 
-
 type GameState struct {
-	P Player
+	P     Player
 	FDeck Deck
 	NDeck Deck
 }
+
 func NewGame() GameState {
 	p := NewPlayer()
 	f := NewFaceDeck()
@@ -13,8 +13,8 @@ func NewGame() GameState {
 	f.Shuffle()
 	n.Shuffle()
 	return GameState{
-		P:p,
-		FDeck:*f,
-		NDeck:*n,
+		P:     p,
+		FDeck: *f,
+		NDeck: *n,
 	}
 }
