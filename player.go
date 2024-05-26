@@ -83,11 +83,11 @@ func (p *Player) RemoveActiveEffect(effect Effects) {
 	for i := len(p.ActiveEffects) - 1; i >= 0; i-- {
 
 		if p.ActiveEffects[i] == effect {
-			if i < len(p.ActiveEffects) {
+			if i == len(p.ActiveEffects)-1 {
+				p.ActiveEffects = p.ActiveEffects[:len(p.ActiveEffects)-1]
+			} else if i < len(p.ActiveEffects) {
 				p.ActiveEffects = append(p.ActiveEffects[:i], p.ActiveEffects[i+1:]...)
 
-			} else if i == len(p.ActiveEffects)-1 {
-				p.ActiveEffects = p.ActiveEffects[:len(p.ActiveEffects)-1]
 			}
 		}
 	}
@@ -246,7 +246,7 @@ func (p Player) TallyEffect(suit Suits) bool {
 
 func (p Player) NumberOfDefeated(suit Suits) int {
 	var count int
-	for _, c := range(p.DefeatedPile){
+	for _, c := range p.DefeatedPile {
 		if c.Suit == suit {
 			count++
 		}

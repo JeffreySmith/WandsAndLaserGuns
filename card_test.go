@@ -74,6 +74,20 @@ func TestDrawFromDeck(t *testing.T) {
 	}
 }
 
+func TestDrawEmptyDeck(t *testing.T) {
+	t.Parallel()
+	d := wl.Deck{}
+	want := false
+	c, got := d.Draw()
+	if want != got {
+		t.Errorf("Want %v, got %v", want, got)
+	}
+	empty := wl.Card{}
+	if !cmp.Equal(c, empty) {
+		t.Error(cmp.Diff(c, empty))
+	}
+}
+
 func TestRemoveAllofClubsFromDeck(t *testing.T) {
 	t.Parallel()
 
@@ -116,10 +130,22 @@ func TestRemoveCardsFromSlice(t *testing.T) {
 	}
 }
 
+func TestRemoveCardsFromSliceOneCard(t *testing.T) {
+	t.Parallel()
+
+	cards := []wl.Card{wl.Card{Value: 8, Suit: wl.Diamonds}}
+	cards = wl.RemoveCards(cards, wl.Diamonds)
+	want := 0
+	got := len(cards)
+	if got != want {
+		t.Errorf("Got %v, want %v", got, want)
+	}
+}
+
 func TestCardDrawTally(t *testing.T) {
 	t.Parallel()
-	faceCard := wl.Card{Value:14, Suit: wl.Diamonds}
-	numberCard := wl.Card{Value:6, Suit: wl.Spades}
+	faceCard := wl.Card{Value: 14, Suit: wl.Diamonds}
+	numberCard := wl.Card{Value: 6, Suit: wl.Spades}
 	p := wl.NewPlayer()
 	got := wl.CalculateDrawTotal(p, faceCard, numberCard)
 	want := 10
@@ -130,8 +156,8 @@ func TestCardDrawTally(t *testing.T) {
 
 func TestCardDrawTallyBoss(t *testing.T) {
 	t.Parallel()
-	faceCard := wl.Card{Value:14, Suit: wl.Diamonds}
-	numberCard := wl.Card{Value:6, Suit: wl.Diamonds}
+	faceCard := wl.Card{Value: 14, Suit: wl.Diamonds}
+	numberCard := wl.Card{Value: 6, Suit: wl.Diamonds}
 	p := wl.NewPlayer()
 	got := wl.CalculateDrawTotal(p, faceCard, numberCard)
 	want := 14
@@ -142,8 +168,8 @@ func TestCardDrawTallyBoss(t *testing.T) {
 
 func TestDrawTallyPlusOneEffect(t *testing.T) {
 	t.Parallel()
-	faceCard := wl.Card{Value:12, Suit: wl.Diamonds}
-	numberCard := wl.Card{Value:6, Suit: wl.Hearts}
+	faceCard := wl.Card{Value: 12, Suit: wl.Diamonds}
+	numberCard := wl.Card{Value: 6, Suit: wl.Hearts}
 	p := wl.NewPlayer()
 	p.ActiveEffects = []wl.Effects{wl.HeartTally}
 	got := wl.CalculateDrawTotal(p, faceCard, numberCard)

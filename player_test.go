@@ -51,7 +51,6 @@ func TestWandsUnBlockedOnDiamonds(t *testing.T) {
 	if !cmp.Equal(want, got) {
 		t.Error(cmp.Diff(want, got))
 	}
-
 }
 
 func TestPlayerWandRoll(t *testing.T) {
@@ -285,8 +284,8 @@ func Test10DiamondsOrMoreToSkipTurn(t *testing.T) {
 	//Pretend this is the defeated pile
 	p.DefeatedPile = wl.NewNumberDeck().Cards
 	p.DefeatedPile = append(p.DefeatedPile,
-		wl.Card{Value:12, Suit:wl.Diamonds},
-		wl.Card{Value: 14, Suit:wl.Diamonds},
+		wl.Card{Value: 12, Suit: wl.Diamonds},
+		wl.Card{Value: 14, Suit: wl.Diamonds},
 	)
 	got := p.NumberOfDefeated(wl.Diamonds)
 	want := 11
