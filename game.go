@@ -18,3 +18,14 @@ func NewGame() GameState {
 		NDeck: *n,
 	}
 }
+
+func Game(result chan <- bool) {
+	var won bool
+	g := NewGame()
+	if g.P.Health > 5{
+		won = true
+	}
+	//Do the game stuff here
+	
+	result <- won
+}

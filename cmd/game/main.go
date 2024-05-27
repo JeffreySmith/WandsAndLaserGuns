@@ -2,14 +2,30 @@ package main
 
 import (
 	"fmt"
+	"sync"
+
 	wl "github.com/JeffreySmith/WandsAndLaserGuns"
 )
 
 func main() {
-	d := wl.NewFaceDeck()
-	d.Shuffle()
-	e := wl.NewNumberDeck()
-	e.Shuffle()
-	fmt.Println(d.Cards[0], d.Cards[4])
-	fmt.Println(e.Cards[0], e.Cards[4])
+	var wg sync.WaitGroup
+	total := 0
+	results := make(chan bool,100)
+	for i:= 0; i < 100; i++ {
+		wg.Add(1)
+		go func(){
+			defer wg.Done()
+			wl.Game(results)
+		}()
+	}
+	go func(){
+		wg.Wait()
+		close(results)
+	}()
+	for result := range results {
+		if result {
+			total += 1
+		}
+	}
+	fmt.Printf("Total wins: %v\n", total)
 }
