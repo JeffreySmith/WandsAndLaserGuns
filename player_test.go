@@ -53,6 +53,34 @@ func TestWandsUnBlockedOnDiamonds(t *testing.T) {
 	}
 }
 
+func TestRemoveSuitEffectWhenBoth(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+
+	p.BlockOnSuit[wl.Diamonds] = []wl.Effects{wl.BlockWands, wl.BlockLasers}
+	want := []wl.Effects{wl.BlockLasers}
+	p.RemoveSuitEffect(wl.Diamonds, wl.BlockWands)
+	got := p.SuitBlockStatus(wl.Diamonds)
+
+	if !cmp.Equal(want, got) {
+		t.Error(cmp.Diff(want, got))
+	}
+}
+
+func TestRemoveSuitEffectWhenBothRemoveSecond(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+
+	p.BlockOnSuit[wl.Diamonds] = []wl.Effects{wl.BlockWands, wl.BlockLasers}
+	want := []wl.Effects{wl.BlockWands}
+	p.RemoveSuitEffect(wl.Diamonds, wl.BlockLasers)
+	got := p.SuitBlockStatus(wl.Diamonds)
+
+	if !cmp.Equal(want, got) {
+		t.Error(cmp.Diff(want, got))
+	}
+}
+
 func TestPlayerWandRoll(t *testing.T) {
 
 	p := wl.Player{}
@@ -297,5 +325,19 @@ func Test10DiamondsOrMoreToSkipTurn(t *testing.T) {
 	got = p.SkipTokens
 	if want != got {
 		t.Errorf("Want %v, got %v", want, got)
+	}
+}
+
+func TestRemoveActiveEffects(t *testing.T) {
+	t.Parallel()
+
+	p := wl.NewPlayer()
+	p.ActiveEffects = []wl.Effects{wl.BlockLasers, wl.BlockWands}
+	p.RemoveActiveEffect(wl.BlockLasers)
+	want := []wl.Effects{wl.BlockWands}
+	got := p.ActiveEffects
+
+	if !cmp.Equal(want, got) {
+		t.Error(cmp.Diff(want, got))
 	}
 }
