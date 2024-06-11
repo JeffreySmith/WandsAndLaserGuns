@@ -220,6 +220,23 @@ func (p *Player) AddStat(stat Stat) {
 	}
 }
 
+func (p *Player) WinSuitStat(card Card) {
+	switch card.Suit {
+	case Diamonds:
+		p.DefeatedPile = append(p.DefeatedPile, card)
+	case Hearts:
+		if p.Health < p.MaxHealth {
+			p.Health += 1
+		} else {
+			p.MaxHealth += 1
+		}
+	case Clubs:
+		p.AddStat(Wand)
+	case Spades:
+		p.AddStat(Laser)
+	}
+}
+
 func (p Player) TallyEffect(suit Suits) bool {
 	var active bool
 
@@ -261,3 +278,4 @@ func (p *Player) CheckDiscardPileForToken() {
 		p.SkipTokens += 1
 	}
 }
+

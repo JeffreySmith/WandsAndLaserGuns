@@ -9,9 +9,11 @@ import (
 
 func main() {
 	var wg sync.WaitGroup
-	total := 0
-	results := make(chan bool,100)
-	for i:= 0; i < 100; i++ {
+	var percent float32
+	var total int
+	number_of_games := 125
+	results := make(chan bool,number_of_games)
+	for i:= 0; i < number_of_games; i++ {
 		wg.Add(1)
 		go func(){
 			defer wg.Done()
@@ -27,5 +29,8 @@ func main() {
 			total += 1
 		}
 	}
-	fmt.Printf("Total wins: %v\n", total)
+	percent = float32(total)/float32(number_of_games) * 100.0
+	
+	fmt.Printf("Total wins: %v out of %v\n", total, number_of_games)
+	fmt.Printf("Win percentage: %0.1f%%\n", percent)
 }

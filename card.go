@@ -333,3 +333,32 @@ func CalculateDrawTotal(p Player, f, n Card) int {
 	}
 	return int(face+number) + bonus
 }
+
+func SameSuit(f, n Card) bool {
+	if f.Suit == n.Suit {
+		return true
+	}
+	return false
+}
+
+func SetBossEffect(player *Player, boss Card, won bool){
+	if won {
+		switch boss.Value {
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		}
+	} else {
+		switch boss.Value {
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		}
+		
+	}
+
+
+		
+}
