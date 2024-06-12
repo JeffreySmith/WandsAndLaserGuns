@@ -279,3 +279,8 @@ func (p *Player) CheckDiscardPileForToken() {
 	}
 }
 
+func (p *Player) AddEffect(effect Effects) {
+	if !slices.Contains(p.ActiveEffects, effect){
+		p.ActiveEffects = append(p.ActiveEffects, effect)
+	}
+}

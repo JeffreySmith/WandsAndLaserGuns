@@ -341,3 +341,22 @@ func TestRemoveActiveEffects(t *testing.T) {
 		t.Error(cmp.Diff(want, got))
 	}
 }
+
+func TestAddEffect(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	want := []wl.Effects{wl.BlockLasers}
+	p.AddEffect(wl.BlockLasers)
+	got := p.ActiveEffects
+
+	if !cmp.Equal(want, got){
+		t.Error(cmp.Diff(want, got))
+	}
+	//Just in case something changes later on, let's make sure this will work
+	p.AddEffect(wl.BlockLasers)
+	got = p.ActiveEffects
+	if !cmp.Equal(want, got){
+		t.Error(cmp.Diff(want, got))
+	}
+	
+}
