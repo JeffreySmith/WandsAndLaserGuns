@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package wandsandlaserguns
 
 import (
+	"math"
 	"math/rand"
 	"slices"
 )
@@ -280,7 +281,33 @@ func (p *Player) CheckDiscardPileForToken() {
 }
 
 func (p *Player) AddEffect(effect Effects) {
-	if !slices.Contains(p.ActiveEffects, effect){
+	if !slices.Contains(p.ActiveEffects, effect) {
 		p.ActiveEffects = append(p.ActiveEffects, effect)
 	}
+}
+func (p *Player) AddSkipToken(num int) {
+	p.SkipTokens += num
+}
+func (p *Player) ShouldSkip(face, number Card, roll int) bool {
+	if p.SkipTokens <= 0 {
+		return false
+	}
+	if face.Suit == number.Suit {
+		return false
+	}
+	total := CalculateDrawTotal(*p, face, number)
+
+	if p.Health > 3 && percent(p.Health, p.MaxHealth) >= 50 {
+		return false
+	}
+	if total < roll {
+		return false
+	}
+	p.SkipTokens -= 1
+	return true
+}
+
+func percent(x, y int) int {
+	var result float64 = float64(x) / float64(y) * 100.0
+	return int(math.Round(result))
 }

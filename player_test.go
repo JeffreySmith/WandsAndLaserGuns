@@ -349,14 +349,93 @@ func TestAddEffect(t *testing.T) {
 	p.AddEffect(wl.BlockLasers)
 	got := p.ActiveEffects
 
-	if !cmp.Equal(want, got){
+	if !cmp.Equal(want, got) {
 		t.Error(cmp.Diff(want, got))
 	}
 	//Just in case something changes later on, let's make sure this will work
 	p.AddEffect(wl.BlockLasers)
 	got = p.ActiveEffects
-	if !cmp.Equal(want, got){
+	if !cmp.Equal(want, got) {
 		t.Error(cmp.Diff(want, got))
 	}
-	
+
+}
+func TestAddToken(t *testing.T) {
+	t.Parallel()
+	p := wl.NewPlayer()
+	p.AddSkipToken(1)
+	want := 1
+	got := p.SkipTokens
+	if want != got {
+		t.Errorf("Got %v, want %v", got, want)
+	}
+}
+func TestPlayerSkipTurnBasic(t *testing.T) {
+	t.Parallel()
+	roll := 5
+	player := wl.NewPlayer()
+	player.MaxHealth = 3
+	player.Health = 1
+	player.AddSkipToken(1)
+	number := wl.Card{Value: 5, Suit: wl.Diamonds}
+	face := wl.Card{Value: 12, Suit: wl.Spades}
+	want := true
+	got := player.ShouldSkip(face, number, roll)
+	if want != got {
+		t.Errorf("Got %v, want %v", got, want)
+	}
+	numTokens := player.SkipTokens
+	if numTokens != 0 {
+		t.Errorf("Got %v, but want no tokens", numTokens)
+	}
+}
+func TestPlayerSkipWithHighRoll(t *testing.T) {
+	t.Parallel()
+	roll := 8
+	player := wl.NewPlayer()
+	player.MaxHealth = 10
+	player.Health = 10
+	player.AddSkipToken(1)
+	number := wl.Card{Value: 5, Suit: wl.Diamonds}
+	face := wl.Card{Value: 12, Suit: wl.Spades}
+
+	got := player.ShouldSkip(face, number, roll)
+	want := false
+
+	if got != want {
+		t.Errorf("Got %v, want %v", got, want)
+	}
+}
+func TestPlayerSkipOnBossFight(t *testing.T) {
+	t.Parallel()
+	roll := 8
+	player := wl.NewPlayer()
+	player.MaxHealth = 10
+	player.Health = 10
+	player.AddSkipToken(1)
+	number := wl.Card{Value: 5, Suit: wl.Diamonds}
+	face := wl.Card{Value: 12, Suit: wl.Diamonds}
+
+	got := player.ShouldSkip(face, number, roll)
+	want := false
+
+	if got != want {
+		t.Errorf("Got %v, want %v", got, want)
+	}
+}
+func TestSkipTurnNoOnHighHealth(t *testing.T) {
+	t.Parallel()
+	player := wl.NewPlayer()
+	player.Health = 10
+	player.MaxHealth = 10
+	roll := 3
+	player.AddSkipToken(1)
+	number := wl.Card{Value: 5, Suit: wl.Diamonds}
+	face := wl.Card{Value: 12, Suit: wl.Spades}
+	want := false
+	got := player.ShouldSkip(face, number, roll)
+
+	if want != got {
+		t.Errorf("Got %v, want %v", got, want)
+	}
 }

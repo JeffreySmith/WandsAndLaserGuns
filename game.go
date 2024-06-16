@@ -57,6 +57,7 @@ func CombatRound(player *Player, face, number Card) bool {
 	var Roll int
 	var suit Suits
 	var card Card
+	var skip bool
 	same_suit := SameSuit(face, number)
 	total := CalculateDrawTotal(*player, face, number)
 	if same_suit {
@@ -68,9 +69,13 @@ func CombatRound(player *Player, face, number Card) bool {
 	}
 	Roll = player.Roll(suit)
 
+	//skip = player.ShouldSkip(face, number, Roll)
+	if skip && !same_suit {
+		return true
+	}
 	if Roll >= total && same_suit {
 		player.WinSuitStat(card)
-		
+
 		return true
 	} else if Roll >= total {
 		player.WinSuitStat(card)

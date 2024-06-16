@@ -341,7 +341,7 @@ func SameSuit(f, n Card) bool {
 	return false
 }
 
-func SetBossEffect(player *Player, boss Card, won bool){
+func SetBossEffect(player *Player, boss Card, won bool) {
 	if won {
 		switch boss.Value {
 		case 11:
@@ -356,9 +356,7 @@ func SetBossEffect(player *Player, boss Card, won bool){
 		case 13:
 		case 14:
 		}
-		
+
 	}
 
-
-		
 }
